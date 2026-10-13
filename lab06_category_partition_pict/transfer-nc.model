@@ -1,0 +1,6 @@
+From: Valid, Frozen, Missing
+To: Valid, Missing, SameAsFrom, FrozenTo
+Amount: Normal, Negative, Zero, MinPositive, AtLimit, OverLimit, AtBalance, OverBalance, OverLimitAfterConv
+Currency: Same, MNT, EUR
+DailyLimit: Free, Partial, Full
+Balance: Positive, Zero
