@@ -1,26 +1,40 @@
 # Лаборатори №6 — Category-Partition ба PICT
 
 **Хичээл:** F.CSA313 — Программ хангамжийн чанарын баталгаа ба тест (2026)  
-**Оюутны нэр:** [ӨӨРИЙН НЭР]  
-**Оюутны код:** [ӨӨРИЙН КОД]
+**Оюутны нэр:** О. Доржсамбуу  
+**Оюутны код:** B232270071
 
-> Энэ репод лабораторийн моделийн эх хувилбар, category-partition шинжилгээ, бодит тест кейсүүд орсон. `results/*.txt` файлуудыг **өөрийн Ubuntu дээр PICT-ээр ажиллуулан** үүсгэнэ. Тестийн мөрийн тоог үр дүн үүссэний дараа нөхнө.
+> Энэхүү репод Category-Partition шинжилгээ, PICT моделууд, Windows 11 дээр PICT-ээр үүсгэсэн тестийн үр дүн, тестийн спецификаци багтсан. Тестийн мөрийн тоог өөрийн компьютерт ажиллуулсан PICT-ийн үр дүнгээс авсан. Банкны API-ийн бодит сервер ажиллуулж шалгасан үр дүн биш; хүлээгдэх хариунууд нь даалгаврын дүрэм, тодорхойлсон fixture-д суурилсан oracle юм.
 
-## Алхам 1. Орчин
+## Алхам 1. Орчин ба PICT бүтээсэн байдал
 
-```bash
-sudo apt update
-sudo apt install -y git cmake g++ make
-mkdir -p ~/tools && cd ~/tools
-git clone https://github.com/microsoft/pict
-cd pict
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j4
-sudo cp build/cli/pict /usr/local/bin/
-pict
+- Үйлдлийн систем: Windows 11, PowerShell
+- CMake: 4.4.4; Ninja: 1.13.2; MSYS2 GCC: 15.2.0
+- PICT: 3.7.4, Microsoft-ийн эх кодоос `pict_cli` target-ийг бүтээсэн
+- MinGW `windres` нь `cli/Resource.rc` дээр алдаа өгсөн тул CLI build-ийн CMake тохиргооноос зөвхөн resource файлыг хассан. Үндсэн C++ эх код өөрчлөгдөөгүй.
+
+```powershell
+cd C:\Users\User\Documents\tools\pict
+# cli/CMakeLists.txt дахь set(pict_cli_rc ...) хэсгийг set(pict_cli_rc) болгосон
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++ -DPICT_RUN_TESTS_ENABLED=OFF
+cmake --build build --target pict_cli --config Release
+.\build\cli\pict.exe /?
 ```
 
-`~/tools/pict` нь лабораторийн репозиторийн **гадна** байх ёстой. Лабынхаа root хавтас руу буцаж ороод `bash generate-results.sh` ажиллуулна.
+PICT-ийн эх код лабораторийн репозиторийн гадна `Documents/tools/pict` хавтсанд байна. Тестийн үр дүнг `results/`-д хадгалсан.
+
+### Үр дүнг дахин үүсгэх (PowerShell)
+
+```powershell
+cd C:\Users\User\Documents\lab06\lab06_category_partition_pict
+$pict = 'C:\Users\User\Documents\tools\pict\build\cli\pict.exe'
+New-Item -ItemType Directory -Force results | Out-Null
+& $pict browser.model /o:2 | Set-Content -Encoding utf8 results\browser-pairwise.txt
+& $pict browser.model /o:3 | Set-Content -Encoding utf8 results\browser-3wise.txt
+& $pict transfer-nc.model | Set-Content -Encoding utf8 results\transfer-nc.txt
+& $pict transfer.model | Set-Content -Encoding utf8 results\transfer.txt
+& $pict transfer-neg.model | Set-Content -Encoding utf8 results\transfer-neg.txt
+```
 
 ## A. Category-Partition: POST /transfer
 
@@ -81,7 +95,7 @@ pict
 
 **Бүрэн олонлог:** `3 × 4 × 9 × 3 × 3 × 2 = 1944`.
 
-Энэ нь параметрийн нэрлэсэн ангиллуудын **хязгаарлалтгүй бүрэн үржвэр**. `[ERROR]` болон `[SINGLE]` ашиглан нэг нэгээр нь тусгаарладаг энгийн category-partition төлөвлөгөөний доорх **зорилтот багц** нь 21 бус, 22 тест юм:
+Энэ нь параметрийн нэрлэсэн ангиллуудын **хязгаарлалтгүй бүрэн үржвэр**. `[ERROR]` болон `[SINGLE]` ашиглан нэг нэгээр нь тусгаарладаг энгийн category-partition төлөвлөгөөний доорх **зорилтот багц** нь 21 тест юм:
 
 - Ерөнхий хүчинтэй суурь: 1.
 - Суурийн валют (2 нэмэлт: MNT, EUR) ба Partial лимитийн бүх валютын 3 хувилбар: 5 нэмэлт; нийлээд 6 хэвийн.
@@ -136,12 +150,12 @@ pict
 
 `browser.model` нь лекцийн зургаан хэмжээсийг агуулна. Бүрэн олонлог `3 × 3 × 2 × 2 × 2 × 2 = 144`.
 
-Жишиг репозиторийн хадгалсан гаралтад **2-way=10**, **3-way=20** тест байсан. Энэ нь энэ төсөл дээр шинээр ажиллуулсан үр дүн биш; өөрийн орчинд `bash generate-results.sh` ажиллуулаад доорх мөрийн тоог шалгана.
+Windows дээр PICT 3.7.4 ашиглан үүсгэсэн бодит үр дүн:
 
-| Түвшин | Мөр (өөрийн PICT гаралтаар нөхөх) | Бүрэн олонлог |
+| Түвшин | Үүссэн тест | Бүрэн олонлог |
 |---|---:|---:|
-| 2-way | TODO | 144 |
-| 3-way | TODO | 144 |
+| 2-way | 10 | 144 |
+| 3-way | 20 | 144 |
 
 2-way-ийн онолын доод хязгаар дор хаяж `3×3=9`, харин 3-way-д дор хаяж `3×3×2=18` мөр хэрэгтэй. PICT нь greedy алгоритм тул практикт эдгээр доод хязгаараас их тест үүсгэж болно; хамгийн цөөн тестийг заавал олох баталгаа байхгүй. 3-way нь гурван параметрийн бүх боломжит хослолыг хамруулах учраас 2-way-гээс олон мөр шаардаж болно.
 
@@ -153,13 +167,13 @@ pict
 
 **Анхаар:** `~` хэрэглэсэн ч `SameAsFrom`-ын утгаас `From=Missing` зэрэг харилцан хамаарал, хөрвүүлэлтийн нөхцөлийг `IF`-ээр илэрхийлэх шаардлагатай. Мөн `Normal` болон `AtLimit` зэрэг ангиллыг валют, үлдэгдэл, ашигласан өдрийн лимиттэй нийцүүлэн бодит утга болгон хувиргах ёстой.
 
-| Модель | Мөр (өөрийн PICT) | Happy path (үнэлэх) | Negative алдаа/мөр |
-|---|---:|---:|---|
-| transfer-nc | TODO | TODO | `0–олон` |
-| transfer | TODO | TODO | `0–олон` |
-| transfer-neg | TODO | TODO | `0–1` (`~` тэмдэглэгээтэй сонголтуудаар) |
+| Модель | Үүссэн тест | Тайлбар |
+|---|---:|---|
+| `transfer-nc.model` | 36 | IF хязгаарлалтгүй pairwise |
+| `transfer.model` | 36 | IF хязгаарлалттай pairwise |
+| `transfer-neg.model` | 48 | `~` negative сонголтуудтай pairwise |
 
-Жишиг репод `36 / 19 / 46` мөр байсан. Гэхдээ энд байгаа `transfer.model` нь жишгээс **өөр хязгаарлалттай**, тиймээс эдгээр тоог шууд хуулж бичихгүй. Хамгийн багадаа `From=Valid`, `To=Valid`, `Amount=Normal`, `Currency=Same`, `DailyLimit=Free`, `Balance=Positive` мөр бодитоор гарсныг шалгах хэрэгтэй. PICT энэ яг зургаан утгын хослолыг заавал гаргахгүй байж болох учраас байхгүй бол гарын тестээр заавал нөхнө.
+`transfer-nc` болон `transfer` ижил 36 мөр гарсан нь хязгаарлалт ажиллаагүй гэсэн баталгаа биш. Хязгаарлалтыг хангаж байгаа эсэхийг мөр тус бүрээр шалгах ёстой. `transfer-neg`-ийн 48 мөр нь алдааны сонголтуудыг илүү тусгаарлан төлөөлсөн үр дүн байж болох ч бодит хамралтыг тооцоолохгүйгээр сайн/муу гэж дүгнэхгүй.
 
 #### Бодит тест кейсийн жишиг
 
@@ -173,7 +187,7 @@ pict
 
 **TC04 — Давхар алдаа.** Setup: A001 хүчинтэй, X999 байхгүй. Body: `{"from":"A001","to":"X999","amount":-50,"currency":"USD"}`. Oracle: `200 {"result":"ERROR_NO_TO"}`; давуу эрэмбийн дагуу `ERROR_BAD_AMOUNT`-аас өмнө шалгагдана.
 
-`results/`-д PICT-ээр гаргасан файлуудаа хадгалж, TC01–TC03-т тохирох гурван **бодит мөрийн дугаарыг** заавал нэмнэ.
+`results/`-д PICT-ээр гаргасан файлууд хадгалагдсан. Дээрх TC01–TC04 нь одоогоор загвартай тулгаж сонгох жишиг; **PICT-ийн яг аль мөртэй тохирохыг шалгаж, 3-аас доошгүй бодит мөрийн дугаар оруулах шаардлагатай**. Тухайн хослол гараагүй бол PICT-ээс гарсан мэтээр тэмдэглэхгүй.
 
 ### B3. Харьцуулалт
 
@@ -191,4 +205,4 @@ pict
 
 ## Коммит ба илгээх журам
 
-Ажлын **бодит явцдаа** эхлээд A хэсэг, дараа нь browser B1, дараа нь transfer B2/B3-ийн файлуудыг тус тус commit хийж 3+ үе шаттай түүх үүсгэнэ. PICT эх код, `build/`, багшийн `.docx` файл оруулахгүй. `results/*.txt` бүх файлыг локал PICT-ээр үүсгэж, README-ийн TODO тоонуудыг солин, 3+ бодит PICT мөрийн дугаарыг нэмснээр дуусгана. Public GitHub репозиторийн холбоосыг Teams Assignment дээр хугацаанд нь илгээж **Turn in** дарна.
+Git түүхэнд эхний файлууд, PICT үр дүн, README ба бодит кейсийн шинжилгээг тусдаа үе шаттай commit болгон хадгална (нийт 3+ commit). PICT эх код, `build/`, багшийн `.docx` файл оруулахгүй. `results/*.txt` файлууд локал PICT-ээр үүссэн. Эцсийн шалгалтаар 3+ бодит PICT мөрийн дугаар, хүлээгдэх API үр дүнг тулгаж баталгаажуулна. Public GitHub репозиторийн холбоосыг Teams Assignment дээр хугацаанд нь илгээж **Turn in** дарна.
