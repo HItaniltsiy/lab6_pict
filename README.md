@@ -21,16 +21,16 @@ cmake --build build --target pict_cli --config Release
 .\build\cli\pict.exe /?
 ```
 
-PICT-ийн эх код лабораторийн репозиторийн гадна `Documents/tools/pict` хавтсанд байна. Тестийн үр дүнг `results/`-д хадгалсан.
+PICT-ийн эх код лабораторийн репозиторийн гадна `Documents/tools/pict` хавтсанд байна. Тестийн үр дүнг `results/`-д хадгалсан. `results/pict-build.txt` файлд PICT-ийн эх кодын commit, ашигласан build орчин болон CLI-ийн хэрэглээний зааврын гаралтыг хавсаргасан.
 
 ### Үр дүнг дахин үүсгэх (PowerShell)
 
 ```powershell
-cd C:\Users\User\Documents\lab06\lab06_category_partition_pict
+cd C:\Users\User\Documents\lab06
 $pict = 'C:\Users\User\Documents\tools\pict\build\cli\pict.exe'
 New-Item -ItemType Directory -Force results | Out-Null
-& $pict browser.model /o:2 | Set-Content -Encoding utf8 results\browser-pairwise.txt
-& $pict browser.model /o:3 | Set-Content -Encoding utf8 results\browser-3wise.txt
+& $pict browser.model /o:2 | Set-Content -Encoding utf8 results\browser-2way.txt
+& $pict browser.model /o:3 | Set-Content -Encoding utf8 results\browser-3way.txt
 & $pict transfer-nc.model | Set-Content -Encoding utf8 results\transfer-nc.txt
 & $pict transfer.model | Set-Content -Encoding utf8 results\transfer.txt
 & $pict transfer-neg.model | Set-Content -Encoding utf8 results\transfer-neg.txt
@@ -212,6 +212,6 @@ Windows дээр PICT 3.7.4 ашиглан үүсгэсэн бодит үр дү
 
 ## Репозиторийн бүтэц ба үр дүнгийн файлууд
 
-Моделуудыг `browser.model`, `transfer-nc.model`, `transfer.model`, `transfer-neg.model` файлуудад хадгалсан. Үүсгэсэн тестийн мөрүүд `results/browser-pairwise.txt`, `results/browser-3wise.txt`, `results/transfer-nc.txt`, `results/transfer.txt`, `results/transfer-neg.txt` файлуудад байна. PICT-ийн бүтээсэн орчны тэмдэглэлийг `results/pict-build.txt` файлд тусад нь хадгалсан.
+Моделуудыг `browser.model`, `transfer-nc.model`, `transfer.model`, `transfer-neg.model` файлуудад хадгалсан. Үүсгэсэн тестийн мөрүүд `results/browser-2way.txt`, `results/browser-3way.txt`, `results/transfer-nc.txt`, `results/transfer.txt`, `results/transfer-neg.txt` файлуудад байна. PICT-ийн эх кодын commit, build орчин болон CLI-ийн хэрэглээний зааврын гаралтыг `results/pict-build.txt` файлд хадгалсан.
 
 PICT-ийн гаралт нь параметрийн ангиллын хослолыг илэрхийлдэг тул бодит API хүсэлт болгох үед валют, дүн, дансны төлөв болон өдрийн ашигласан лимитийг тухайн тестийн нөхцөлтэй нийцүүлэн тохируулна.

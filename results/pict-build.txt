@@ -5,3 +5,21 @@ Compiler: MSYS2 GCC 15.2.0
 Build: CMake 4.4.4 + Ninja 1.13.2
 Target: pict_cli
 Resource.rc excluded for MinGW compatibility
+PICT help output:
+Pairwise Independent Combinatorial Testing
+
+Usage: pict model [options]
+
+Options:
+ /o:N|max         - Order of combinations (default: 2)
+ /d:C             - Separator for values  (default: ,)
+ /a:C             - Separator for aliases (default: |)
+ /n:C             - Negative value prefix (default: ~)
+ /e:file          - File with seeding rows
+ /r[:N]           - Randomize generation, N - seed
+ /b:N             - Try N seeds, keep the smallest suite
+ /t:N             - Number of worker threads (default: auto)
+ /f[:text|json]   - Output format (default: text)
+ /c               - Case-sensitive model evaluation
+ /s               - Show model statistics
+
