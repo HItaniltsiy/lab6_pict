@@ -1,0 +1,7 @@
+ab76c25 Bump the github-actions group with 3 updates (#168)
+PICT version: 3.7.4
+OS: Windows 11
+Compiler: MSYS2 GCC 15.2.0
+Build: CMake 4.4.4 + Ninja 1.13.2
+Target: pict_cli
+Resource.rc excluded for MinGW compatibility
